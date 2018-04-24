@@ -22,7 +22,7 @@ class Airplane:
 
 
 class Airport:
-    def __init__(self, name, country, coord_x=0, coord_y=0, times_visited=0, neighbours =[]):
+    def __init__(self, name, country, coord_x=0, coord_y=0, times_visited=0, possible_destinations=None):
 
         # Name of airport, also it's ID
         self.name = name
@@ -40,5 +40,17 @@ class Airport:
         self.times_visited = times_visited
 
         # List of airports connectd to this one
-        self.neighbours = neighbours
+        if possible_destinations is not None:
+            self.possible_destinations = possible_destinations
+        else:
+            self.possible_destinations = []
 
+
+class Connection:
+    def __init__(self, beginning, end, distance):
+        # Order of those 2 objects matters, connection has a direction
+        self.beginning = beginning
+        self.end = end
+
+        # Each connection has it's own length, it can contradict distance calculated from 2 airport coordinates
+        self.distance = distance
