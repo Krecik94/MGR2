@@ -3,6 +3,7 @@ import time
 from GIS.configuration import Configuration
 from GIS.graphics import *
 from GIS.view import View
+from GIS.model import Model
 
 
 def main():
@@ -12,7 +13,8 @@ def main():
         for possible_destination in value.possible_destinations:
             print('{0} -> {1}'.format(value.name, possible_destination.name))
 
-    view = View(configuration)
+    model = Model()
+    view = View(configuration, model)
 
     point = Point(10, 10)
     point.draw(view.window)
