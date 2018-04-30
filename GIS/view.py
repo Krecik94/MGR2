@@ -69,8 +69,11 @@ class View():
             self.airports_to_draw[i].setFill(color_rgb(random.randrange(256),random.randrange(256),random.randrange(256)))
             self.airports_to_draw[i].draw(self.window)
 
-        for label_to_draw in self.airport_labels:
-            label_to_draw.draw(self.window)
+        for i in range(len(self.airport_labels)):
+            random.seed(self.airport_list[i].country)
+            if (random.randrange(256)+random.randrange(256)+random.randrange(256))/3 <= 120:
+                self.airport_labels[i].setFill('white')
+            self.airport_labels[i].draw(self.window)
 
         for airplane_to_draw in self.airplanes_to_draw:
             airplane_to_draw.setFill('blue')
