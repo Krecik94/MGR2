@@ -1,6 +1,7 @@
 from GIS.configuration import AirplaneState
 from GIS.graphics import *
 import math
+import random
 
 
 class View():
@@ -63,9 +64,10 @@ class View():
             connection_to_draw.setArrow('last')
             connection_to_draw.draw(self.window)
 
-        for airport_to_draw in self.airports_to_draw:
-            airport_to_draw.setFill('red')
-            airport_to_draw.draw(self.window)
+        for i in range(len(self.airports_to_draw)):
+            random.seed(self.airport_list[i].country)
+            self.airports_to_draw[i].setFill(color_rgb(random.randrange(256),random.randrange(256),random.randrange(256)))
+            self.airports_to_draw[i].draw(self.window)
 
         for label_to_draw in self.airport_labels:
             label_to_draw.draw(self.window)

@@ -3,8 +3,8 @@ from enum import Enum
 
 class Configuration:
     def __init__(self):
-        self.number_of_airplanes = 14
-        self.step = 50
+        self.number_of_airplanes = 4
+        self.step = 10
         self.airports = {'A': Airport(name='A', country='1', coord_x=10, coord_y=10),
                          'B': Airport(name='B', country='1', coord_x=100, coord_y=100),
                          'C': Airport(name='C', country='2', coord_x=100, coord_y=200),
@@ -21,7 +21,7 @@ class Configuration:
                             Connection(beginning=self.airports['B'], end=self.airports['C'], distance=2000),
                             Connection(beginning=self.airports['C'], end=self.airports['E'], distance=2500),
                             Connection(beginning=self.airports['E'], end=self.airports['G'], distance=5000),
-                            Connection(beginning=self.airports['G'], end=self.airports['F'], distance=6000),
+                            Connection(beginning=self.airports['G'], end=self.airports['F'], distance=3000),
                             Connection(beginning=self.airports['F'], end=self.airports['G'], distance=2500),
                             Connection(beginning=self.airports['G'], end=self.airports['B'], distance=3000),
                             Connection(beginning=self.airports['D'], end=self.airports['F'], distance=4000),
