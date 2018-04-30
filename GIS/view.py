@@ -1,3 +1,4 @@
+from GIS.configuration import AirplaneState
 from GIS.graphics import *
 import math
 
@@ -54,7 +55,8 @@ class View():
 
         self.airplanes_to_draw = []
         for airplane in self.airplane_list:
-            self.airplanes_to_draw.append(Circle(Point(airplane.origin.coord_x, airplane.origin.coord_y), 7))
+            self.airplanes_to_draw.append(
+                Circle(Point(airplane.last_landing.coord_x, airplane.last_landing.coord_y), 7))
 
         for connection_to_draw in self.connections_to_draw:
             connection_to_draw.setWidth(1)
@@ -72,3 +74,26 @@ class View():
             airplane_to_draw.setFill('blue')
             airplane_to_draw.draw(self.window)
 
+    def update(self):
+        for i in range(len(self.airplane_list)):
+            current_x = self.airplanes_to_draw[i].getCenter().x
+            current_y = self.airplanes_to_draw[i].getCenter().y
+
+            if self.airplane_list[i].state == AirplaneState.STATIONARY:
+                end_x = self.airplane_list[i].last_landing.coord_x
+                end_y = self.airplane_list[i].last_landing.coord_y
+
+                self.airplanes_to_draw[i].move(end_x - current_x, end_y - current_y)
+
+            else:
+                connection_vector_x = \
+                    self.airplane_list[i].connection.end.coord_x - self.airplane_list[i].connection.beginning.coord_x
+                connection_vector_y = \
+                    self.airplane_list[i].connection.end.coord_y - self.airplane_list[i].connection.beginning.coord_y
+
+                perctentage_traveled = self.airplane_list[i].distance_traveled / self.airplane_list[i].connection.distance
+
+                end_x = self.airplane_list[i].connection.beginning.coord_x + connection_vector_x * perctentage_traveled
+                end_y = self.airplane_list[i].connection.beginning.coord_y + connection_vector_y * perctentage_traveled
+
+                self.airplanes_to_draw[i].move(end_x - current_x, end_y - current_y)

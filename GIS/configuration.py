@@ -1,7 +1,9 @@
 from enum import Enum
+
+
 class Configuration:
     def __init__(self):
-        self.number_of_airplanes = 3
+        self.number_of_airplanes = 6
         self.airports = {'A': Airport(name='A', country='1', coord_x=10, coord_y=10),
                          'B': Airport(name='B', country='1', coord_x=100, coord_y=100),
                          'C': Airport(name='C', country='2', coord_x=100, coord_y=200),
@@ -11,17 +13,19 @@ class Configuration:
                          'G': Airport(name='G', country='5', coord_x=300, coord_y=200),
                          }
 
-        self.connections = [Connection(beginning=self.airports['A'], end=self.airports['B'], distance=1),
-                            Connection(beginning=self.airports['A'], end=self.airports['F'], distance=2),
-                            Connection(beginning=self.airports['A'], end=self.airports['D'], distance=4),
-                            Connection(beginning=self.airports['B'], end=self.airports['C'], distance=3),
-                            Connection(beginning=self.airports['C'], end=self.airports['E'], distance=2),
-                            Connection(beginning=self.airports['E'], end=self.airports['G'], distance=1),
-                            Connection(beginning=self.airports['G'], end=self.airports['F'], distance=2),
-                            Connection(beginning=self.airports['F'], end=self.airports['G'], distance=2)]
+        self.connections = [Connection(beginning=self.airports['A'], end=self.airports['B'], distance=7000),
+                            Connection(beginning=self.airports['B'], end=self.airports['A'], distance=4000),
+                            Connection(beginning=self.airports['A'], end=self.airports['F'], distance=4000),
+                            Connection(beginning=self.airports['A'], end=self.airports['D'], distance=5000),
+                            Connection(beginning=self.airports['B'], end=self.airports['C'], distance=2000),
+                            Connection(beginning=self.airports['C'], end=self.airports['E'], distance=2500),
+                            Connection(beginning=self.airports['E'], end=self.airports['G'], distance=5000),
+                            Connection(beginning=self.airports['G'], end=self.airports['F'], distance=6000),
+                            Connection(beginning=self.airports['F'], end=self.airports['G'], distance=2500),
+                            Connection(beginning=self.airports['G'], end=self.airports['B'], distance=1000),]
 
         for connection in self.connections:
-            self.airports[connection.beginning.name].possible_destinations.append(connection.end)
+            self.airports[connection.beginning.name].outgoing_connections.append(connection)
 
 
 class AirplaneState(Enum):
@@ -30,18 +34,18 @@ class AirplaneState(Enum):
 
 
 class Airplane:
-    def __init__(self, origin=None, destination=None, state=AirplaneState.STATIONARY, distance_traveled=0):
-        # Where it's flying from
-        self.origin = origin
-
-        # Where it's flying to
-        self.destination = destination
+    def __init__(self, last_landing=None, state=AirplaneState.STATIONARY, distance_traveled=0, connection=None):
+        # Name of last landing location
+        self.last_landing = last_landing
 
         # If it's flying or not
         self.state = state
 
         # How far has it already traveled
         self.distance_traveled = distance_traveled
+
+        # Connection on which the plane is flying
+        self.connection = connection
 
 
 class Airport:
@@ -64,9 +68,9 @@ class Airport:
 
         # List of airports connected to this one
         if possible_destinations is not None:
-            self.possible_destinations = possible_destinations
+            self.outgoing_connections = possible_destinations
         else:
-            self.possible_destinations = []
+            self.outgoing_connections = []
 
 
 class Connection:
@@ -80,4 +84,3 @@ class Connection:
 
         # Check if any plane is currently on a given connection
         self.is_occupied = False
-
