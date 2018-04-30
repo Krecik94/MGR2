@@ -16,11 +16,11 @@ class Model():
                                            state=AirplaneState.STATIONARY,
                                            distance_traveled=0))
 
-    def step(self):
+    def step(self, configuration):
         # Adding distance to planes
         for airplane in self.airplanes:
             if airplane.state is AirplaneState.IN_FLIGHT:
-                airplane.distance_traveled += 10
+                airplane.distance_traveled += configuration.step
 
         # Checking which airplanes landed
         for airplane in self.airplanes:

@@ -16,7 +16,7 @@ def main():
     view = View(configuration, model)
 
     for i in range(100000):
-        model.step()
+        model.step(configuration)
         view.update()
         time.sleep(0.01)
 
