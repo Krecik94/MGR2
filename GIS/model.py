@@ -2,10 +2,6 @@ from GIS.configuration import *
 import random
 
 
-
-
-
-
 class Model():
     def __init__(self):
         configuration = Configuration()
@@ -27,6 +23,7 @@ class Model():
             if airplane.state == AirplaneState.IN_FLIGHT:
                 if airplane.distance_traveled >= airplane.connection.distance:
                     airplane.last_landing = airplane.connection.end
+                    airplane.country_history.append(airplane.connection.end.country)
                     airplane.distance_traveled = 0
                     airplane.connection.is_occupied = False
                     airplane.state = AirplaneState.STATIONARY
@@ -38,7 +35,10 @@ class Model():
                 possible_connections = []
                 for connection in airplane.last_landing.outgoing_connections:
                     if connection.is_occupied is not True:
-                        possible_connections.append(connection)
+                        if len(airplane.country_history) < 3 \
+                                or len(set(airplane.country_history[-3:])) > 1 \
+                                or connection.end.country not in airplane.country_history[-3:]:
+                            possible_connections.append(connection)
 
                 if possible_connections:
                     airplane.connection = random.choice(possible_connections)
