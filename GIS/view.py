@@ -24,6 +24,11 @@ class View():
         # List of labels of times the airport has been visited
         self.airport_visited_labels = []
 
+        self.clock = Text(Point(850, 950),
+                          'Day {day}, Time {hours}:{minutes}'.format(day=model.days,
+                                                                     hours=model.hours,
+                                                                     minutes=model.minutes))
+
         for airport in self.airport_list:
             self.airports_to_draw.append(Circle(Point(airport.coord_x, airport.coord_y), 15))
             self.airport_labels.append(Text(Point(airport.coord_x, airport.coord_y), airport.name))
@@ -58,6 +63,8 @@ class View():
 
         self.airplane_list = model.airplanes
 
+        self.clock.draw(self.window)
+
         self.airplanes_to_draw = []
         for airplane in self.airplane_list:
             self.airplanes_to_draw.append(
@@ -87,7 +94,12 @@ class View():
             airplane_to_draw.setFill('blue')
             airplane_to_draw.draw(self.window)
 
-    def update(self):
+    def update(self,model):
+        # Update clock
+        self.clock.setText('Day {day}, Time {hours}:{minutes:02.0f}'.format(day=model.days,
+                                                                      hours=model.hours,
+                                                                      minutes=model.minutes))
+
         # Update labels
         for i in range(len(self.airport_visited_labels)):
             self.airport_visited_labels[i].setText(self.airport_list[i].times_visited)

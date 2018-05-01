@@ -4,7 +4,8 @@ from enum import Enum
 class Configuration:
     def __init__(self):
         self.number_of_airplanes = 4
-        self.step = 30
+        self.plane_speed = 800  # km/h
+        self.simulation_tempo = 0.1 # amount of hours processed in 0.01 seconds
 
         # Case 2 airport weights test
         # self.airports = {'A': Airport(name='A', country='country_1', coord_x=300, coord_y=300),
@@ -16,12 +17,12 @@ class Configuration:
         #
         # self.connections = [Connection(beginning=self.airports['A'], end=self.airports['B'], distance=1000),
         #                     Connection(beginning=self.airports['B'], end=self.airports['A'], distance=1000),
-        #                     Connection(beginning=self.airports['A'], end=self.airports['C'], distance=1000),
-        #                     Connection(beginning=self.airports['C'], end=self.airports['A'], distance=1000),
-        #                     Connection(beginning=self.airports['A'], end=self.airports['D'], distance=1000),
-        #                     Connection(beginning=self.airports['D'], end=self.airports['A'], distance=1500),
-        #                     Connection(beginning=self.airports['A'], end=self.airports['E'], distance=1000),
-        #                     Connection(beginning=self.airports['E'], end=self.airports['A'], distance=1000), ]
+        #                     Connection(beginning=self.airports['A'], end=self.airports['C'], distance=2000),
+        #                     Connection(beginning=self.airports['C'], end=self.airports['A'], distance=2000),
+        #                     Connection(beginning=self.airports['A'], end=self.airports['D'], distance=3000),
+        #                     Connection(beginning=self.airports['D'], end=self.airports['A'], distance=3000),
+        #                     Connection(beginning=self.airports['A'], end=self.airports['E'], distance=4000),
+        #                     Connection(beginning=self.airports['E'], end=self.airports['A'], distance=4000), ]
         # Case 1 first iteration
         self.airports = {'A': Airport(name='A', country='country_1', coord_x=30, coord_y=30),
                          'B': Airport(name='B', country='country_1', coord_x=100, coord_y=100),
@@ -43,7 +44,7 @@ class Configuration:
                             Connection(beginning=self.airports['F'], end=self.airports['G'], distance=2500),
                             Connection(beginning=self.airports['G'], end=self.airports['B'], distance=3000),
                             Connection(beginning=self.airports['D'], end=self.airports['F'], distance=4000),
-                            Connection(beginning=self.airports['F'], end=self.airports['D'], distance=3000),]
+                            Connection(beginning=self.airports['F'], end=self.airports['D'], distance=3000), ]
 
         for connection in self.connections:
             self.airports[connection.beginning.name].outgoing_connections.append(connection)
@@ -111,3 +112,6 @@ class Connection:
 
         # Check if any plane is currently on a given connection
         self.is_occupied = False
+
+        # How many times a plane used this connection
+        self.times_utilised = 0
