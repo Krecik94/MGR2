@@ -6,10 +6,10 @@ import random
 
 class View():
     def __init__(self, configuration, model):
-        self.window = GraphWin('Symulator', 700, 700)
+        self.window = GraphWin('Symulator', 1100, 700)
 
         # sets origin and converts x and y coords to go as in algebra
-        self.window.setCoords(0, 0, 1000, 1000)
+        self.window.setCoords(0, 0, 1500, 1000)
 
         # List of airport objects
         self.airport_list = list(configuration.airports.values())
@@ -82,9 +82,9 @@ class View():
             self.airports_to_draw[i].draw(self.window)
 
         for i in range(len(self.airport_labels)):
-            random.seed(self.airport_list[i].country)
-            if (random.randrange(256) + random.randrange(256) + random.randrange(256)) / 3 <= 120:
-                self.airport_labels[i].setFill('white')
+            # random.seed(self.airport_list[i].country)
+            # if (random.randrange(256) + random.randrange(256) + random.randrange(256)) / 3 <= 120:
+            #     self.airport_labels[i].setFill('white')
             self.airport_labels[i].draw(self.window)
 
         for i in range(len(self.airport_visited_labels)):
