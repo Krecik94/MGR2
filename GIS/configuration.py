@@ -4,8 +4,9 @@ from enum import Enum
 class Configuration:
     def __init__(self):
         self.number_of_airplanes = 4
+        self.simulation_length = 3  # days
         self.plane_speed = 800  # km/h
-        self.simulation_tempo = 0.1 # amount of hours processed in 0.01 seconds
+        self.simulation_tempo = 0.1  # amount of hours processed in 0.01 seconds
 
         # Case 2 airport weights test
         # self.airports = {'A': Airport(name='A', country='country_1', coord_x=300, coord_y=300),
@@ -114,4 +115,4 @@ class Connection:
         self.is_occupied = False
 
         # How many times a plane used this connection
-        self.times_utilised = 0
+        self.times_used = 0

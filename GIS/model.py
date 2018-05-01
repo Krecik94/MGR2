@@ -65,5 +65,6 @@ class Model():
 
                     # Choosing a connections with least times visited at random
                     airplane.connection = random.choice(possible_connections)
+                    airplane.connection.times_used +=1
                     airplane.state = AirplaneState.IN_FLIGHT
                     airplane.connection.is_occupied = True
