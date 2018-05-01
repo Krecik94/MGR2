@@ -3,8 +3,8 @@ import random
 
 
 class Model():
-    def __init__(self):
-        configuration = Configuration()
+    def __init__(self, configuration):
+
         self.airplanes = []
 
         for i in range(configuration.number_of_airplanes):
@@ -24,6 +24,7 @@ class Model():
                 if airplane.distance_traveled >= airplane.connection.distance:
                     airplane.last_landing = airplane.connection.end
                     airplane.country_history.append(airplane.connection.end.country)
+                    airplane.connection.end.times_visited += 1
                     airplane.distance_traveled = 0
                     airplane.connection.is_occupied = False
                     airplane.state = AirplaneState.STATIONARY

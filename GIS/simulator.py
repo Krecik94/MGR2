@@ -12,7 +12,8 @@ def main():
         for outgoing_connection in value.outgoing_connections:
             print('{0} -> {1}'.format(value.name, outgoing_connection.end.name))
 
-    model = Model()
+    configuration = Configuration()
+    model = Model(configuration)
     view = View(configuration, model)
 
     for i in range(100000):

@@ -21,10 +21,14 @@ class View():
         self.airports_to_draw = []
         # List of labels on airports
         self.airport_labels = []
+        # List of labels of times the airport has been visited
+        self.airport_visited_labels = []
 
         for airport in self.airport_list:
             self.airports_to_draw.append(Circle(Point(airport.coord_x, airport.coord_y), 15))
             self.airport_labels.append(Text(Point(airport.coord_x, airport.coord_y), airport.name))
+            self.airport_visited_labels.append(
+                Text(Point(airport.coord_x + 20, airport.coord_y - 20), airport.times_visited))
 
         # List of Line objects representing connections
         self.connections_to_draw = []
@@ -66,20 +70,29 @@ class View():
 
         for i in range(len(self.airports_to_draw)):
             random.seed(self.airport_list[i].country)
-            self.airports_to_draw[i].setFill(color_rgb(random.randrange(256),random.randrange(256),random.randrange(256)))
+            self.airports_to_draw[i].setFill(
+                color_rgb(random.randrange(256), random.randrange(256), random.randrange(256)))
             self.airports_to_draw[i].draw(self.window)
 
         for i in range(len(self.airport_labels)):
             random.seed(self.airport_list[i].country)
-            if (random.randrange(256)+random.randrange(256)+random.randrange(256))/3 <= 120:
+            if (random.randrange(256) + random.randrange(256) + random.randrange(256)) / 3 <= 120:
                 self.airport_labels[i].setFill('white')
             self.airport_labels[i].draw(self.window)
+
+        for i in range(len(self.airport_visited_labels)):
+            self.airport_visited_labels[i].draw(self.window)
 
         for airplane_to_draw in self.airplanes_to_draw:
             airplane_to_draw.setFill('blue')
             airplane_to_draw.draw(self.window)
 
     def update(self):
+        # Update labels
+        for i in range(len(self.airport_visited_labels)):
+            self.airport_visited_labels[i].setText(self.airport_list[i].times_visited)
+
+        # Update airplane positions
         for i in range(len(self.airplane_list)):
             current_x = self.airplanes_to_draw[i].getCenter().x
             current_y = self.airplanes_to_draw[i].getCenter().y
@@ -96,7 +109,8 @@ class View():
                 connection_vector_y = \
                     self.airplane_list[i].connection.end.coord_y - self.airplane_list[i].connection.beginning.coord_y
 
-                perctentage_traveled = self.airplane_list[i].distance_traveled / self.airplane_list[i].connection.distance
+                perctentage_traveled = self.airplane_list[i].distance_traveled / self.airplane_list[
+                    i].connection.distance
 
                 end_x = self.airplane_list[i].connection.beginning.coord_x + connection_vector_x * perctentage_traveled
                 end_y = self.airplane_list[i].connection.beginning.coord_y + connection_vector_y * perctentage_traveled
