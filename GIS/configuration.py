@@ -5,6 +5,24 @@ class Configuration:
     def __init__(self):
         self.number_of_airplanes = 4
         self.step = 30
+
+        # Case 2 airport weights test
+        # self.airports = {'A': Airport(name='A', country='country_1', coord_x=300, coord_y=300),
+        #                  'B': Airport(name='B', country='country_2', coord_x=200, coord_y=300),
+        #                  'C': Airport(name='C', country='country_3', coord_x=400, coord_y=300),
+        #                  'D': Airport(name='D', country='country_4', coord_x=300, coord_y=200),
+        #                  'E': Airport(name='E', country='country_5', coord_x=300, coord_y=400),
+        #                  }
+        #
+        # self.connections = [Connection(beginning=self.airports['A'], end=self.airports['B'], distance=1000),
+        #                     Connection(beginning=self.airports['B'], end=self.airports['A'], distance=1000),
+        #                     Connection(beginning=self.airports['A'], end=self.airports['C'], distance=1000),
+        #                     Connection(beginning=self.airports['C'], end=self.airports['A'], distance=1000),
+        #                     Connection(beginning=self.airports['A'], end=self.airports['D'], distance=1000),
+        #                     Connection(beginning=self.airports['D'], end=self.airports['A'], distance=1500),
+        #                     Connection(beginning=self.airports['A'], end=self.airports['E'], distance=1000),
+        #                     Connection(beginning=self.airports['E'], end=self.airports['A'], distance=1000), ]
+        # Case 1 first iteration
         self.airports = {'A': Airport(name='A', country='country_1', coord_x=30, coord_y=30),
                          'B': Airport(name='B', country='country_1', coord_x=100, coord_y=100),
                          'C': Airport(name='C', country='country_2', coord_x=100, coord_y=200),

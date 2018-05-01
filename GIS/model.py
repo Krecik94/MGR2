@@ -42,6 +42,13 @@ class Model():
                             possible_connections.append(connection)
 
                 if possible_connections:
+                    # Sorting the list
+                    possible_connections.sort(key= lambda x: x.end.times_visited)
+
+                    # Extracting connections with least times visited
+                    possible_connections = [x for x in possible_connections if x.end.times_visited == possible_connections[0].end.times_visited]
+
+                    # Choosing a connections with least times visited at random
                     airplane.connection = random.choice(possible_connections)
                     airplane.state = AirplaneState.IN_FLIGHT
                     airplane.connection.is_occupied = True
