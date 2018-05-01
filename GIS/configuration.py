@@ -384,6 +384,20 @@ class Configuration:
                             Connection(beginning=self.airports['Berlin'], end=self.airports['Nuremberg']),
                             Connection(beginning=self.airports['Prague'], end=self.airports['Nuremberg']),
                             Connection(beginning=self.airports['Krakow'], end=self.airports['Nuremberg']),
+                            Connection(beginning=self.airports['Berlin'], end=self.airports['Prague']),
+                            Connection(beginning=self.airports['Berlin'], end=self.airports['Wroclaw']),
+                            Connection(beginning=self.airports['Berlin'], end=self.airports['Warsaw']),
+                            Connection(beginning=self.airports['Prague'], end=self.airports['Berlin']),
+                            Connection(beginning=self.airports['Wroclaw'], end=self.airports['Berlin']),
+                            Connection(beginning=self.airports['Warsaw'], end=self.airports['Berlin']),
+                            Connection(beginning=self.airports['Wroclaw'], end=self.airports['Prague']),
+                            Connection(beginning=self.airports['Wroclaw'], end=self.airports['Warsaw']),
+                            Connection(beginning=self.airports['Wroclaw'], end=self.airports['Krakow']),
+                            Connection(beginning=self.airports['Prague'], end=self.airports['Wroclaw']),
+                            Connection(beginning=self.airports['Warsaw'], end=self.airports['Wroclaw']),
+                            Connection(beginning=self.airports['Krakow'], end=self.airports['Wroclaw']),
+                            Connection(beginning=self.airports['Krakow'], end=self.airports['Warsaw']),
+                            Connection(beginning=self.airports['Warsaw'], end=self.airports['Krakow']),
 
                             ]
 
