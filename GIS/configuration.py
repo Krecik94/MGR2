@@ -4,10 +4,10 @@ import math
 
 class Configuration:
     def __init__(self):
-        self.number_of_airplanes = 30
+        self.number_of_airplanes = 20
         self.simulation_length = 4  # days
         self.plane_speed = 500  # km/h
-        self.simulation_tempo = 0.0005  # amount of hours processed in 0.01 seconds
+        self.simulation_tempo = 0.0003  # amount of hours processed in 0.01 seconds
 
         disabled_countries = []
         disabled_cities = []

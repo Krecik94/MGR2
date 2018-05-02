@@ -91,7 +91,7 @@ class View():
             self.airport_visited_labels[i].draw(self.window)
 
         for airplane_to_draw in self.airplanes_to_draw:
-            airplane_to_draw.setFill('blue')
+            airplane_to_draw.setFill(color_rgb(random.randrange(256), random.randrange(256), random.randrange(256)))
             airplane_to_draw.draw(self.window)
 
     def update(self,model):
