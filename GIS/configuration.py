@@ -236,6 +236,8 @@ class Configuration:
                             Connection(beginning=self.airports['Turin'], end=self.airports['Stuttgart']),
                             Connection(beginning=self.airports['Milan'], end=self.airports['Stuttgart']),
                             Connection(beginning=self.airports['Verona'], end=self.airports['Stuttgart']),
+                            Connection(beginning=self.airports['Verona'], end=self.airports['Munich']),
+                            Connection(beginning=self.airports['Munich'], end=self.airports['Verona']),
                             Connection(beginning=self.airports['Venice'], end=self.airports['Stuttgart']),
                             Connection(beginning=self.airports['Zagreb'], end=self.airports['Stuttgart']),
                             Connection(beginning=self.airports['Salzburg'], end=self.airports['Stuttgart']),
