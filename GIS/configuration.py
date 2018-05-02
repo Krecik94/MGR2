@@ -4,10 +4,14 @@ import math
 
 class Configuration:
     def __init__(self):
-        self.number_of_airplanes = 4
-        self.simulation_length = 22222222  # days
-        self.plane_speed = 800  # km/h
-        self.simulation_tempo = 0.01  # amount of hours processed in 0.01 seconds
+        self.number_of_airplanes = 30
+        self.simulation_length = 4  # days
+        self.plane_speed = 500  # km/h
+        self.simulation_tempo = 0.0005  # amount of hours processed in 0.01 seconds
+
+        disabled_countries = []
+        disabled_cities = []
+
 
         # Case 3 Europe
         self.airports = {'Lisbon': Airport(name='Lisbon', country='Spain', coord_x=50, coord_y=100),
@@ -24,7 +28,8 @@ class Configuration:
                          'Geneva': Airport(name='Geneva', country='France', coord_x=800, coord_y=550),
                          'London': Airport(name='London', country='Great Britain', coord_x=400, coord_y=800),
                          'Bristol': Airport(name='Bristol', country='Great Britain', coord_x=350, coord_y=830),
-                         'Luxembourg City': Airport(name='Luxembourg City', country='Luxembourg', coord_x=700, coord_y=750),
+                         'Luxembourg City': Airport(name='Luxembourg City', country='Luxembourg', coord_x=700,
+                                                    coord_y=750),
                          'Brussels': Airport(name='Brussels', country='Belgium', coord_x=680, coord_y=780),
                          'Antwerp': Airport(name='Antwerp', country='Belgium', coord_x=680, coord_y=820),
                          'Amsterdam': Airport(name='Amsterdam', country='Netherlands', coord_x=720, coord_y=920),
@@ -58,8 +63,6 @@ class Configuration:
                          'Thessaloniki': Airport(name='Thessaloniki', country='Greece', coord_x=1370, coord_y=290),
                          'Corfu': Airport(name='Corfu', country='Greece', coord_x=1270, coord_y=250),
                          'Athens': Airport(name='Athens', country='Greece', coord_x=1410, coord_y=190),
-                         'Tunis': Airport(name='Tunis', country='Tunisia', coord_x=950, coord_y=33),
-
                          }
 
         self.connections = [Connection(beginning=self.airports['Lisbon'], end=self.airports['Porto']),
@@ -398,7 +401,6 @@ class Configuration:
                             Connection(beginning=self.airports['Krakow'], end=self.airports['Wroclaw']),
                             Connection(beginning=self.airports['Krakow'], end=self.airports['Warsaw']),
                             Connection(beginning=self.airports['Warsaw'], end=self.airports['Krakow']),
-
                             ]
 
         # Case 2 airport weights test
@@ -440,6 +442,22 @@ class Configuration:
         #                     Connection(beginning=self.airports['G'], end=self.airports['B'], distance=3000),
         #                     Connection(beginning=self.airports['D'], end=self.airports['F'], distance=4000),
         #                     Connection(beginning=self.airports['F'], end=self.airports['D'], distance=3000), ]
+
+        # Filtering disabled countries
+        for airport in list(self.airports.values()):
+            if airport.country in disabled_countries:
+                self.airports.pop(airport.name)
+
+        self.connections = [x for x in self.connections if
+                            x.beginning.country not in disabled_countries and x.end.country not in disabled_countries]
+
+        # Filtering disables cities
+        for airport in list(self.airports.values()):
+            if airport.name in disabled_cities:
+                self.airports.pop(airport.name)
+
+        self.connections = [x for x in self.connections if
+                            x.beginning.name not in disabled_cities and x.end.name not in disabled_cities]
 
         for connection in self.connections:
             self.airports[connection.beginning.name].outgoing_connections.append(connection)
@@ -507,8 +525,10 @@ class Connection:
             self.distance = distance
         else:
             self.distance = math.sqrt(
-                math.pow(end.coord_x - beginning.coord_x, 2) + pow(end.coord_y - beginning.coord_y, 2)) * 1.5
+                math.pow(end.coord_x - beginning.coord_x, 2) + pow(end.coord_y - beginning.coord_y, 2)) * 1.8
 
+        if beginning.name == 'Paris' and end.name == 'London':
+            print(self.distance)
         # Check if any plane is currently on a given connection
         self.is_occupied = False
 

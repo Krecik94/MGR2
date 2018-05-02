@@ -12,7 +12,8 @@ def main():
     view = View(configuration, model)
 
     while model.days <= configuration.simulation_length:
-        model.step(configuration)
+        for i in range (100):
+            model.step(configuration)
         view.update(model)
         time.sleep(0.01)
 
