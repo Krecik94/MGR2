@@ -1,9 +1,9 @@
 import time
 
-from GIS.configuration import Configuration
-from GIS.graphics import *
-from GIS.view import View
-from GIS.model import Model
+from configuration import Configuration
+from graphics import *
+from view import View
+from model import Model
 
 
 def main():

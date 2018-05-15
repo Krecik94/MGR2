@@ -1,4 +1,4 @@
-from GIS.configuration import *
+from configuration import *
 import random
 
 

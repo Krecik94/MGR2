@@ -1,5 +1,5 @@
-from GIS.configuration import AirplaneState
-from GIS.graphics import *
+from configuration import AirplaneState
+from graphics import *
 import math
 import random
 
