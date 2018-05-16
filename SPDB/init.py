@@ -1,6 +1,8 @@
 import osmapi
 import urllib.request
 
+import router
+
 api = osmapi.OsmApi()
 #print(api.NotesSearch(123))
 nodeToSearch = "node[\"name:en\"=\"Warsaw\"];out;"
