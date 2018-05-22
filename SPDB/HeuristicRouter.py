@@ -166,7 +166,7 @@ class HeuristicRouter:
                 datapoints[i].random_weight = len(datapoints) - i
 
             for i in range(len(datapoints)):
-                datapoints[i].recalculate_total_weight(1, 1, 1, 1)
+                datapoints[i].recalculate_total_weight(3, 1, 1, 2)
 
             datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
@@ -200,7 +200,7 @@ class HeuristicRouter:
                     datapoints[i].bearing_weight = len(datapoints) - i
 
                 for i in range(len(datapoints)):
-                    datapoints[i].recalculate_total_weight(1, 1, 1, 1)
+                    datapoints[i].recalculate_total_weight(3, 1, 1, 2)
 
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
