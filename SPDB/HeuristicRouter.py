@@ -28,6 +28,12 @@ def calculate_distance(input_longitide_1,
     return distance.distance((input_latitude_1, input_longitide_1), (input_latitude_2, input_longitide_2)).km
 
 
+def calculate_bearing_difference(b1, b2):
+    angle = abs(b2 - b1)
+    angle = min(360 - angle, angle)
+    return angle
+
+
 def calculate_initial_compass_bearing(pointA, pointB):
     """
     Calculates the bearing between two points.
@@ -102,9 +108,16 @@ class HeuristicRouter:
                                      self.routes[route_index].start.y,
                                      self.routes[route_index].end.x,
                                      self.routes[route_index].end.y))
-            print(
-                calculate_initial_compass_bearing((self.routes[route_index].start.y, self.routes[route_index].start.x),
-                                                  (self.routes[route_index].end.y, self.routes[route_index].end.x)))
+            bearing_1 = calculate_initial_compass_bearing(
+                (self.routes[route_index].start.y, self.routes[route_index].start.x),
+                (self.routes[route_index].end.y, self.routes[route_index].end.x))
+            print(bearing_1)
+            bearing_2 = calculate_initial_compass_bearing(
+                (self.routes[route_index].start.y, self.routes[route_index].start.x),
+                (self.routes[route_index].intermediate_points[0].y,
+                 self.routes[route_index].intermediate_points[0].x))
+            print(bearing_2)
+            print(calculate_bearing_difference(bearing_1,bearing_2))
             if len(self.routes[route_index].intermediate_points) == 0:
                 return 'https://maps.openrouteservice.org/directions?n1={y_start}&n2={x_start}&n3=12&a={y_start},{x_start},{y_end},{x_end}&b=0&c=0&k1=en-US&k2=km'.format(
                     x_start=self.routes[route_index].start.x,
@@ -120,7 +133,7 @@ class HeuristicRouter:
                     return_string += ',{y_point},{x_point}'.format(x_point=point.x,
                                                                    y_point=point.y)
 
-                return_string += ',{x_end},{y_end}&b=0&c=0&k1=en-US&k2=km'.format(
+                return_string += ',{y_end},{x_end}&b=0&c=0&k1=en-US&k2=km'.format(
                     x_end=self.routes[route_index].end.x,
                     y_end=self.routes[route_index].end.y)
 

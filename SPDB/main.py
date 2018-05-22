@@ -5,7 +5,7 @@ from HeuristicRouter import HeuristicRouter, Location, Route
 def main():
     router = HeuristicRouter()
 
-    for i in range(2):
+    for i in range(3):
         router.add_location(Location(latitude=random.randrange(5211, 5231) / 100,
                                      longitude=random.randrange(2084, 2125) / 100))
 
