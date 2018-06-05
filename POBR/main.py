@@ -3,7 +3,7 @@ import numpy as np
 import time
 import sys
 
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(4000)
 
 
 def is_stop_sign(img, upper, lower, left, right):
@@ -62,6 +62,7 @@ def fill_region(img, i, j, analysed_points, found_regions, current_region, depth
 
 def main():
     img = cv2.imread('images\\5.jpg')
+    img  = cv2.resize(img,(200,int(len(img)/len(img[0])*200)))
     # hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # for i in range(len(hsv_image)):
@@ -77,7 +78,7 @@ def main():
 
     for i in range(len(img)):
         for j in range(len(img[0])):
-            if (img[i][j][2] > 170 and img[i][j][0] < 180 and img[i][j][1] < 180):
+            if (img[i][j][2] > 160 and img[i][j][0] < 180 and img[i][j][1] < 180):
                 img[i][j][0] = 255
                 img[i][j][1] = 255
                 img[i][j][2] = 255
@@ -102,14 +103,14 @@ def main():
     found_left = None
     for i in range(len(img[0])):
         if list(img[0:, i, 0]).count(255) > len(img[0]) / 7:
-            print(list(img[i, 0:, 0]).count(255))
+            print(list(img[ 0:,i, 0]).count(255))
             found_left = i
             break
 
     found_right = None
     for i in reversed(range(len(img[0]))):
         if list(img[0:, i, 0]).count(255) > len(img[0]) / 7:
-            print(list(img[i, 0:, 0]).count(255))
+            print(list(img[ 0:,i, 0]).count(255))
             found_right = i
             break
 
@@ -156,6 +157,7 @@ def main():
     print(len(img[0]))
 
     # hsv_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
+    cv2.imwrite('images\\5_solved.jpg',img)
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
