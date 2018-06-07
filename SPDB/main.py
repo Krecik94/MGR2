@@ -12,7 +12,7 @@ end = {'latitude': 53.893009, 'longitude': 27.567444}
 
 def main():
     clnt = client.Client(key=api_key)
-    router = HeuristicRouter(max_distance=4000)
+    router = HeuristicRouter(max_distance=3300)
     map1 = folium.Map(location=([start['latitude'], start['longitude']]))
 
     orig_route = {'profile': 'driving-car', 'format_out': 'geojson', 'units': 'km', 'geometry': 'true',
@@ -21,7 +21,7 @@ def main():
                                   [end['longitude'], end['latitude']]
                                   ]}
 
-    new_route = {'profile': 'driving-car', 'format_out': 'geojson', 'units': 'km', 'geometry': 'true',
+    new_route = {'profile': 'driving-hgv', 'format_out': 'geojson', 'units': 'km', 'geometry': 'true',
                  'geometry_format': 'geojson', 'instructions': 'false',
                  'coordinates': []}
 
@@ -29,21 +29,21 @@ def main():
                                  longitude=start['longitude']))
     # Germany
     for i in range(33):
-        router.add_location(Location(latitude=random.uniform(49.8342418433, 52.7859681528),
-                                     longitude=random.uniform(6.4021235239, 12.6643305552)))
+        router.add_location(Location(latitude=random.uniform(49.83424184, 52.78596815),
+                                     longitude=random.uniform(6.40212352, 12.66433055)))
 
     for i in range(33):
-        router.add_location(Location(latitude=random.uniform(50.4485650153, 53.3323301908),
-                                     longitude=random.uniform(19.7587519419, 26.5757685435)))
+        router.add_location(Location(latitude=random.uniform(50.44856501, 53.33233019),
+                                     longitude=random.uniform(19.75875194, 26.57576854)))
 
     for i in range(33):
-        router.add_location(Location(latitude=random.uniform(47.9455811959, 51.542728235),
-                                     longitude=random.uniform(14.9439936411, 22.6014643443)))
+        router.add_location(Location(latitude=random.uniform(47.94558119, 51.5427282),
+                                     longitude=random.uniform(14.94399364, 22.60146434)))
 
     router.add_location(Location(latitude=end['latitude'],
                                  longitude=end['longitude']))
 
-    iterations = router.calculate_routes_for_given_time(datetime.timedelta(seconds=20))
+    iterations = router.calculate_routes_for_given_time(datetime.timedelta(seconds=30))
 
     print('Number of iterations: {iterations}'.format(iterations=iterations))
     print(router.export_route_to_link(-1))
@@ -58,11 +58,11 @@ def main():
     new_route['coordinates'].append([best_route.end.x, best_route.end.y])
     folium.Marker([best_route.end.y, best_route.end.x], icon=folium.Icon(color='red')).add_to(map1)
 
-    # for loc in router.locations:
-    #     if ((loc.x != start['longitude'] and loc.y != start['latitude'])
-    #             and
-    #             (loc.x != end['longitude'] and loc.y != end['latitude'])):
-    #         folium.Marker([loc.y, loc.x]).add_to(map1)
+    for loc in router.locations:
+        if ((loc.x != start['longitude'] and loc.y != start['latitude'])
+                and
+                (loc.x != end['longitude'] and loc.y != end['latitude'])):
+            folium.Marker([loc.y, loc.x]).add_to(map1)
 
     route_chunked = list(chunks(new_route['coordinates'], 49))
     mutual_point = []

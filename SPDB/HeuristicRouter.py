@@ -113,6 +113,8 @@ class HeuristicRouter:
             self.locations = []
         self.routes = []
         self.max_distance = max_distance
+        self.only_distance_route = None
+        self.only_bearing_route = None
 
     def add_location(self, location):
         self.locations.append(location)
@@ -233,6 +235,18 @@ class HeuristicRouter:
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
             print(len(constructed_route))
+            if distance_multiplier == 0 and bearing_multiplier == 1 and random_multiplier == 0 and clump_multiplier == 0:
+                self.only_bearing_route = (Route(start=self.locations[0],
+                                                 end=self.locations[-1],
+                                                 intermediate_points=[route_point.corresponding_location for route_point
+                                                                      in
+                                                                      constructed_route]))
+            if distance_multiplier == 1 and bearing_multiplier == 0 and random_multiplier == 0 and clump_multiplier == 0:
+                self.only_distance_route = (Route(start=self.locations[0],
+                                                  end=self.locations[-1],
+                                                  intermediate_points=[route_point.corresponding_location for
+                                                                       route_point in
+                                                                       constructed_route]))
             if len(self.routes) == 0 or len(self.routes[-1].intermediate_points) < len(constructed_route):
                 print('found_better')
                 self.routes.append(Route(start=self.locations[0],
@@ -286,11 +300,11 @@ class HeuristicRouter:
 
         iterations = 0
         was_better = False
-        was_not_better_counter = 0
-        best_distance_multiplier = random.randrange(0, 4000) / 1000
-        best_bearing_multiplier = random.randrange(0, 4000) / 1000
-        best_clump_multiplier = random.randrange(0, 2000) / 1000
-        best_random_multiplier = random.randrange(0, 2000) / 1000
+        was_not_better_counter = 99999
+        best_distance_multiplier = 1 + random.randrange(0, 1000) / 1000
+        best_bearing_multiplier = random.randrange(0, 1000) / 1000
+        best_clump_multiplier = random.randrange(0, 500) / 1000
+        best_random_multiplier = random.randrange(0, 500) / 1000
         best_clump_number = random.randrange(3, 5)
         distance_multiplier = best_distance_multiplier
         bearing_multiplier = best_bearing_multiplier
@@ -299,6 +313,7 @@ class HeuristicRouter:
         clump_number = best_clump_number
 
         while current_time < end_time:
+            print('Time remaining: {time}'.format(time=end_time - current_time))
             iterations += 1
             if was_better:
                 was_not_better_counter = 0
@@ -309,25 +324,30 @@ class HeuristicRouter:
                 best_clump_number = clump_number
             else:
                 was_not_better_counter += 1
-                which_to_change = random.randrange(0, 4)
-                if which_to_change == 0:
-                    distance_multiplier = best_distance_multiplier + (random.randrange(0, 400) - 200) / 1000
-                if which_to_change == 1:
-                    bearing_multiplier = best_bearing_multiplier + (random.randrange(0, 400) - 200) / 1000
-                if which_to_change == 2:
-                    clump_multiplier = best_clump_multiplier + (random.randrange(0, 200) - 100) / 1000
-                if which_to_change == 3:
-                    random_multiplier = best_random_multiplier + (random.randrange(0, 200) - 100) / 1000
-                if which_to_change == 4:
-                    clump_number = best_clump_number + random.randrange(1, 3) - 2
+                if was_not_better_counter > 15:
+                    which_to_change = random.randrange(0, 4)
+                    if which_to_change == 0:
+                        distance_multiplier = best_distance_multiplier + (random.randrange(0, 100) - 50) / 1000
+                    if which_to_change == 1:
+                        bearing_multiplier = best_bearing_multiplier + (random.randrange(0, 100) - 50) / 1000
+                    if which_to_change == 2:
+                        clump_multiplier = best_clump_multiplier + (random.randrange(0, 50) - 25) / 1000
+                    if which_to_change == 3:
+                        random_multiplier = best_random_multiplier + (random.randrange(0, 50) - 25) / 1000
+                    if which_to_change == 4:
+                        clump_number = best_clump_number + random.randrange(1, 3) - 2
                 if was_not_better_counter > 50:
                     print('Resetting')
-                    distance_multiplier = random.randrange(0, 4000) / 1000
-                    bearing_multiplier = random.randrange(0, 4000) / 1000
-                    clump_multiplier = random.randrange(0, 2000) / 1000
-                    random_multiplier = random.randrange(0, 2000) / 1000
+                    distance_multiplier = 1 + random.randrange(0, 1000) / 1000
+                    bearing_multiplier = random.randrange(0, 1000) / 1000
+                    clump_multiplier = random.randrange(0, 500) / 1000
+                    random_multiplier = random.randrange(0, 500) / 1000
                     clump_number = random.randrange(3, 5)
-
+            print('distance: {distance} ; bearing: {bearing} ; clump: {clump} ; random: {random}'.format(
+                distance=distance_multiplier,
+                bearing=bearing_multiplier,
+                clump=clump_multiplier,
+                random=random_multiplier))
             was_better = self._calculate_route(distance_multiplier=distance_multiplier,
                                                bearing_multiplier=bearing_multiplier,
                                                clump_multiplier=clump_multiplier,
