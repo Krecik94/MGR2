@@ -5,7 +5,6 @@ from HeuristicRouter import HeuristicRouter, Location, Route
 from openrouteservice import client
 import datetime
 
-
 api_key = '58d904a497c67e00015b45fc1f9700c9ad4d40e1b7e22af323c7dbbe'
 start = {'latitude': 48.864716, 'longitude': 2.349014}
 end = {'latitude': 53.893009, 'longitude': 27.567444}
@@ -17,14 +16,14 @@ def main():
     map1 = folium.Map(location=([start['latitude'], start['longitude']]))
 
     orig_route = {'profile': 'driving-car', 'format_out': 'geojson', 'units': 'km', 'geometry': 'true',
-                    'geometry_format': 'geojson', 'instructions': 'false',
-                    'coordinates': [[start['longitude'], start['latitude']],
-                                   [end['longitude'], end['latitude']]
-                                   ]}
+                  'geometry_format': 'geojson', 'instructions': 'false',
+                  'coordinates': [[start['longitude'], start['latitude']],
+                                  [end['longitude'], end['latitude']]
+                                  ]}
 
     new_route = {'profile': 'driving-car', 'format_out': 'geojson', 'units': 'km', 'geometry': 'true',
-                    'geometry_format': 'geojson', 'instructions': 'false',
-                    'coordinates': []}
+                 'geometry_format': 'geojson', 'instructions': 'false',
+                 'coordinates': []}
 
     router.add_location(Location(latitude=start['latitude'],
                                  longitude=start['longitude']))
@@ -52,18 +51,24 @@ def main():
 
     best_route = router.get_route(-1)
     new_route['coordinates'].append([best_route.start.x, best_route.start.y])
-    folium.Marker([best_route.start.y, best_route.start.x]).add_to(map1)
+    folium.Marker([best_route.start.y, best_route.start.x], icon=folium.Icon(color='green')).add_to(map1)
     for loc in best_route.intermediate_points:
         new_route['coordinates'].append([loc.x, loc.y])
         folium.Marker([loc.y, loc.x]).add_to(map1)
     new_route['coordinates'].append([best_route.end.x, best_route.end.y])
-    folium.Marker([best_route.end.y, best_route.end.x]).add_to(map1)
+    folium.Marker([best_route.end.y, best_route.end.x], icon=folium.Icon(color='red')).add_to(map1)
+
+    # for loc in router.locations:
+    #     if ((loc.x != start['longitude'] and loc.y != start['latitude'])
+    #             and
+    #             (loc.x != end['longitude'] and loc.y != end['latitude'])):
+    #         folium.Marker([loc.y, loc.x]).add_to(map1)
 
     route_chunked = list(chunks(new_route['coordinates'], 49))
     mutual_point = []
     for chunk in route_chunked:
         new_route['coordinates'] = chunk
-        if(len(mutual_point) != 0):
+        if len(mutual_point) != 0:
             new_route['coordinates'].insert(0, mutual_point)
         route = clnt.directions(**new_route)
         folium.features.GeoJson(route).add_to(map1)
@@ -74,9 +79,11 @@ def main():
 
     map1.save('map.html')
 
+
 def chunks(l, n):
     for i in range(0, len(l), n):
-        yield l[i:i+n]
+        yield l[i:i + n]
+
 
 if __name__ == '__main__':
     main()
