@@ -50,7 +50,15 @@ def calculate_distance(input_longitude_1,
                        input_latitude_1,
                        input_longitude_2,
                        input_latitude_2):
-    return distance.distance((input_latitude_1, input_longitude_1), (input_latitude_2, input_longitude_2)).km
+    return fast_distance_calculation(input_latitude_1, input_longitude_1, input_latitude_2, input_longitude_2)
+    # return distance.distance((input_latitude_1, input_longitude_1), (input_latitude_2, input_longitude_2)).km
+
+
+def fast_distance_calculation(lat, lng, lat0, lng0):
+    deglen = 110.25
+    x = lat - lat0
+    y = (lng - lng0) * cos(lat0)
+    return deglen * sqrt(x * x + y * y)
 
 
 def calculate_bearing_difference(b1, b2):
@@ -131,10 +139,10 @@ class HeuristicRouter:
 
             for datapoint in datapoints:
                 for distance_to in self.locations:
-                    datapoint.distances[distance_to] = calculate_distance(datapoint.x,
-                                                                          datapoint.y,
-                                                                          distance_to.x,
-                                                                          distance_to.y)
+                    datapoint.distances[distance_to] = fast_distance_calculation(datapoint.y,
+                                                                                 datapoint.x,
+                                                                                 distance_to.y,
+                                                                                 distance_to.x)
 
             # first loop, get distance from start
             for datapoint in datapoints:
@@ -187,10 +195,10 @@ class HeuristicRouter:
             constructed_route.append(datapoints.pop(0))
             accumulated_distance += constructed_route[0].distances[self.locations[0]]
 
-            while len(datapoints) > 0 and accumulated_distance < self.max_distance:
+            while len(datapoints) > 0:
                 constructed_route.append(datapoints.pop(0))
                 accumulated_distance += constructed_route[-1].distances[constructed_route[-2].corresponding_location]
-                if accumulated_distance > self.max_distance:
+                if accumulated_distance + constructed_route[-1].distances[self.locations[-1]] > self.max_distance:
                     constructed_route.pop()
                     break
 
@@ -237,9 +245,35 @@ class HeuristicRouter:
     def calculate_routes_for_given_time(self, time_for_calculations=datetime.timedelta(seconds=5)):
         current_time = datetime.datetime.now()
         end_time = datetime.datetime.now() + time_for_calculations
+
+        # Only distance
+        self._calculate_route(1, 0, 0, 0)
+        current_time = datetime.datetime.now()
+        if current_time > end_time:
+            return 0
+
+        # Only bearing
+        self._calculate_route(0, 1, 0, 0)
+        current_time = datetime.datetime.now()
+        if current_time > end_time:
+            return 0
+
+        # Only clump score
+        self._calculate_route(0, 0, 1, 0)
+        current_time = datetime.datetime.now()
+        if current_time > end_time:
+            return 0
+
+        iterations = 0
         while current_time < end_time:
-            self._calculate_route()
+            iterations += 1
+            self._calculate_route(distance_multiplier=random.randrange(0, 4000) / 1000,
+                                  bearing_multiplier=random.randrange(0, 4000) / 1000,
+                                  clump_multiplier=random.randrange(0, 4000) / 1000,
+                                  random_multiplier=random.randrange(0, 4000) / 1000,
+                                  clump_number=random.randrange(3, 5))
             current_time = datetime.datetime.now()
+        return iterations
 
     def export_route_to_link(self, route_index):
         all_points_link = ''
