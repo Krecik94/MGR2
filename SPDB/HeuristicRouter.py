@@ -195,7 +195,7 @@ class HeuristicRouter:
             constructed_route.append(datapoints.pop(0))
             accumulated_distance += constructed_route[0].distances[self.locations[0]]
 
-            while len(datapoints) > 0:
+            while len(datapoints) > 2:
                 constructed_route.append(datapoints.pop(0))
                 accumulated_distance += constructed_route[-1].distances[constructed_route[-2].corresponding_location]
                 if accumulated_distance + constructed_route[-1].distances[self.locations[-1]] > self.max_distance:
@@ -275,6 +275,9 @@ class HeuristicRouter:
             current_time = datetime.datetime.now()
         return iterations
 
+    def get_route(self, route_index):
+        return self.routes[route_index]
+
     def export_route_to_link(self, route_index):
         all_points_link = ''
         all_points_link += 'https://maps.openrouteservice.org/directions?n1={y_start}&n2={x_start}&n3=12&a={y_start},{x_start}'.format(
@@ -294,20 +297,7 @@ class HeuristicRouter:
             return 'Index out of bounds'
         else:
             # DEBUG PRINTS START
-            print(calculate_distance(self.routes[route_index].start.x,
-                                     self.routes[route_index].start.y,
-                                     self.routes[route_index].end.x,
-                                     self.routes[route_index].end.y))
-            bearing_1 = calculate_initial_compass_bearing(
-                (self.routes[route_index].start.y, self.routes[route_index].start.x),
-                (self.routes[route_index].end.y, self.routes[route_index].end.x))
-            print(bearing_1)
-            bearing_2 = calculate_initial_compass_bearing(
-                (self.routes[route_index].start.y, self.routes[route_index].start.x),
-                (self.routes[route_index].intermediate_points[0].y,
-                 self.routes[route_index].intermediate_points[0].x))
-            print(bearing_2)
-            print(calculate_bearing_difference(bearing_1, bearing_2))
+            print('Intermediate points: {intermediate_points}'.format(intermediate_points=len(self.routes[route_index].intermediate_points)))
             # DEBUG PRINTS END
 
             if len(self.routes[route_index].intermediate_points) == 0:
