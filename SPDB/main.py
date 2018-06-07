@@ -3,7 +3,7 @@ from HeuristicRouter import HeuristicRouter, Location, Route
 
 
 def main():
-    router = HeuristicRouter(max_distance=90)
+    router = HeuristicRouter(max_distance=80)
 
     router.add_location(Location(latitude=52.05,
                                  longitude=20.5))

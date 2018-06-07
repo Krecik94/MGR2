@@ -204,7 +204,7 @@ class HeuristicRouter:
 
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
-            if len(self.routes) == 0 or len(self.routes[-1].intermediate_points) > len(constructed_route):
+            if len(self.routes) == 0 or len(self.routes[-1].intermediate_points) < len(constructed_route):
                 print('found_better')
                 self.routes.append(Route(start=self.locations[0],
                                          end=self.locations[-1],
