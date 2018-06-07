@@ -275,6 +275,9 @@ class HeuristicRouter:
             current_time = datetime.datetime.now()
         return iterations
 
+    def get_route(self, route_index):
+        return self.routes[route_index]
+
     def export_route_to_link(self, route_index):
         all_points_link = ''
         all_points_link += 'https://maps.openrouteservice.org/directions?n1={y_start}&n2={x_start}&n3=12&a={y_start},{x_start}'.format(

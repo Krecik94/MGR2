@@ -42,6 +42,7 @@ def main():
     iterations = router.calculate_routes_for_given_time(datetime.timedelta(seconds=20))
     print('Number of iterations: {iterations}'.format(iterations=iterations))
     print(router.export_route_to_link(-1))
+    print(len(router.get_route(-1).intermediate_points))
 
 
 if __name__ == '__main__':
