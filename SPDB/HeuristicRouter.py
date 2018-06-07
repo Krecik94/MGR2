@@ -37,13 +37,12 @@ class RoutingDatapoint(Location):
         self.clump_weight = 0
 
         self.random_value = 0
-        self.random_weight = 0
 
         self.total_weight = 0
 
     def recalculate_total_weight(self, distance_multiplier=1, bearing_multiplier=1, clump_multiplier=1,
                                  random_multiplier=1):
-        self.total_weight = self.distance_weight * distance_multiplier + self.bearing_weight * bearing_multiplier + self.clump_weight * clump_multiplier + self.random_weight * random_multiplier
+        self.total_weight = self.distance_weight * distance_multiplier + self.bearing_weight * bearing_multiplier + self.clump_weight * clump_multiplier + self.random_value * random_multiplier
 
 
 def calculate_distance(input_longitude_1,
@@ -109,20 +108,25 @@ class HeuristicRouter:
     def add_location(self, location):
         self.locations.append(location)
 
-    def _calculate_route(self):
+    def _calculate_route(self,
+                         distance_multiplier=1,
+                         bearing_multiplier=1,
+                         clump_multiplier=1,
+                         random_multiplier=1,
+                         clump_number=4):
+
         if len(self.locations) < 2:
             raise Exception('Not enough locations')
         elif len(self.locations) == 2:
             self.routes.append(Route(start=self.locations[0],
                                      end=self.locations[-1]))
         else:
-
-            # TODO: ROUTE CALCULATOR GOES HERE
+            # extracting every point except start and end
             intermediate_points = [location for i, location in enumerate(self.locations) if
                                    i not in [0, len(self.locations) - 1]]
             datapoints = []
             for point in intermediate_points:
-                datapoints.append(RoutingDatapoint(point, point.x, point.y))
+                datapoints.append(RoutingDatapoint(location=point, longitude=point.x, latitude=point.y))
 
             for datapoint in datapoints:
                 for distance_to in self.locations:
@@ -131,9 +135,11 @@ class HeuristicRouter:
                                                                           distance_to.x,
                                                                           distance_to.y)
 
+            # first loop, get distance from start
             for datapoint in datapoints:
                 datapoint.current_distance = datapoint.distances[self.locations[0]]
 
+            # first loop, bearing difference between start/end and start/point
             for datapoint in datapoints:
                 datapoint.current_angle = calculate_bearing_difference(
                     calculate_initial_compass_bearing((self.locations[0].y, self.locations[0].x),
@@ -143,27 +149,30 @@ class HeuristicRouter:
 
             for datapoint in datapoints:
                 sorted_distances = sorted(list(datapoint.distances.values()))
-                NUMBER_OF_POINTS_CALCULATED_INTO_CLUMP = 4
+                NUMBER_OF_POINTS_CALCULATED_INTO_CLUMP = clump_number
                 datapoint.clump_score = sum(sorted_distances[0:NUMBER_OF_POINTS_CALCULATED_INTO_CLUMP])
 
             for datapoint in datapoints:
-                datapoint.random_value = random.randrange(0, 1000)
+                datapoint.random_value = random.randrange(0, 100)
 
+            # calculating weights
             datapoints = sorted(datapoints, key=lambda datapoint: datapoint.current_distance)
             for i in range(len(datapoints)):
-                datapoints[i].distance_weight = len(datapoints) - i
+                min_max_difference = datapoints[-1].current_distance - datapoints[0].current_distance
+                datapoints[i].distance_weight = 100 - (100 / min_max_difference) * (
+                        datapoints[i].current_distance - datapoints[0].current_distance)
 
             datapoints = sorted(datapoints, key=lambda datapoint: datapoint.current_angle)
             for i in range(len(datapoints)):
-                datapoints[i].bearing_weight = len(datapoints) - i
+                min_max_difference = datapoints[-1].current_angle - datapoints[0].current_angle
+                datapoints[i].bearing_weight = 100 - (100 / min_max_difference) * (
+                        datapoints[i].current_angle - datapoints[0].current_angle)
 
             datapoints = sorted(datapoints, key=lambda datapoint: datapoint.clump_score)
             for i in range(len(datapoints)):
-                datapoints[i].clump_weight = len(datapoints) - i
-
-            datapoints = sorted(datapoints, key=lambda datapoint: datapoint.random_value)
-            for i in range(len(datapoints)):
-                datapoints[i].random_weight = len(datapoints) - i
+                min_max_difference = datapoints[-1].clump_score - datapoints[0].clump_score
+                datapoints[i].clump_weight = 100 - (100 / min_max_difference) * (
+                        datapoints[i].clump_score - datapoints[0].clump_score)
 
             for i in range(len(datapoints)):
                 datapoints[i].recalculate_total_weight(3, 1, 1, 2)
@@ -185,9 +194,12 @@ class HeuristicRouter:
 
                 for datapoint in datapoints:
                     datapoint.current_distance = datapoint.distances[constructed_route[-1].corresponding_location]
+
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.current_distance)
                 for i in range(len(datapoints)):
-                    datapoints[i].distance_weight = len(datapoints) - i
+                    min_max_difference = datapoints[-1].current_distance - datapoints[0].current_distance
+                    datapoints[i].distance_weight = 100 - (100 / min_max_difference) * (
+                            datapoints[i].current_distance - datapoints[0].current_distance)
 
                 for datapoint in datapoints:
                     datapoint.current_angle = calculate_bearing_difference(
@@ -195,9 +207,12 @@ class HeuristicRouter:
                                                           (self.locations[-1].y, self.locations[-1].x)),
                         calculate_initial_compass_bearing((constructed_route[-1].y, constructed_route[-1].x),
                                                           (datapoint.y, datapoint.x)))
+
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.current_angle)
                 for i in range(len(datapoints)):
-                    datapoints[i].bearing_weight = len(datapoints) - i
+                    min_max_difference = datapoints[-1].current_angle - datapoints[0].current_angle
+                    datapoints[i].bearing_weight = 100 - (100 / min_max_difference) * (
+                            datapoints[i].current_angle - datapoints[0].current_angle)
 
                 for i in range(len(datapoints)):
                     datapoints[i].recalculate_total_weight(3, 1, 1, 2)
@@ -210,8 +225,6 @@ class HeuristicRouter:
                                          end=self.locations[-1],
                                          intermediate_points=[route_point.corresponding_location for route_point in
                                                               constructed_route]))
-
-            pass
 
     def calculate_number_of_routes(self, number_of_routes):
         # Call calculate_route a number_of_routes, either sequentially or using threads
