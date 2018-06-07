@@ -14,7 +14,7 @@ def main():
     router.add_location(Location(latitude=52.4,
                                  longitude=21.3))
 
-    router.calculate_number_of_routes(200)
+    router.calculate_routes_for_given_time()
     print(router.export_route_to_link(-1))
 
 

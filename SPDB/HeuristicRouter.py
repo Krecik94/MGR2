@@ -1,6 +1,7 @@
 from math import sin, cos, sqrt, atan2, radians, degrees
 from geopy import distance
 import random
+import datetime
 
 
 class Route:
@@ -175,7 +176,8 @@ class HeuristicRouter:
                         datapoints[i].clump_score - datapoints[0].clump_score)
 
             for i in range(len(datapoints)):
-                datapoints[i].recalculate_total_weight(distance_multiplier, bearing_multiplier, clump_multiplier, random_multiplier)
+                datapoints[i].recalculate_total_weight(distance_multiplier, bearing_multiplier, clump_multiplier,
+                                                       random_multiplier)
 
             datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
@@ -215,7 +217,8 @@ class HeuristicRouter:
                             datapoints[i].current_angle - datapoints[0].current_angle)
 
                 for i in range(len(datapoints)):
-                    datapoints[i].recalculate_total_weight(distance_multiplier, bearing_multiplier, clump_multiplier, random_multiplier)
+                    datapoints[i].recalculate_total_weight(distance_multiplier, bearing_multiplier, clump_multiplier,
+                                                           random_multiplier)
 
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
@@ -230,6 +233,13 @@ class HeuristicRouter:
         # Call calculate_route a number_of_routes, either sequentially or using threads
         for i in range(number_of_routes):
             self._calculate_route()
+
+    def calculate_routes_for_given_time(self, time_for_calculations=datetime.timedelta(seconds=5)):
+        current_time = datetime.datetime.now()
+        end_time = datetime.datetime.now() + time_for_calculations
+        while current_time < end_time:
+            self._calculate_route()
+            current_time = datetime.datetime.now()
 
     def export_route_to_link(self, route_index):
         all_points_link = ''
