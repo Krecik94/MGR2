@@ -195,7 +195,7 @@ class HeuristicRouter:
             constructed_route.append(datapoints.pop(0))
             accumulated_distance += constructed_route[0].distances[self.locations[0]]
 
-            while len(datapoints) > 0:
+            while len(datapoints) > 2:
                 constructed_route.append(datapoints.pop(0))
                 accumulated_distance += constructed_route[-1].distances[constructed_route[-2].corresponding_location]
                 if accumulated_distance + constructed_route[-1].distances[self.locations[-1]] > self.max_distance:
