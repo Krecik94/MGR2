@@ -175,7 +175,7 @@ class HeuristicRouter:
                         datapoints[i].clump_score - datapoints[0].clump_score)
 
             for i in range(len(datapoints)):
-                datapoints[i].recalculate_total_weight(3, 1, 1, 2)
+                datapoints[i].recalculate_total_weight(distance_multiplier, bearing_multiplier, clump_multiplier, random_multiplier)
 
             datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
@@ -215,7 +215,7 @@ class HeuristicRouter:
                             datapoints[i].current_angle - datapoints[0].current_angle)
 
                 for i in range(len(datapoints)):
-                    datapoints[i].recalculate_total_weight(3, 1, 1, 2)
+                    datapoints[i].recalculate_total_weight(distance_multiplier, bearing_multiplier, clump_multiplier, random_multiplier)
 
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
