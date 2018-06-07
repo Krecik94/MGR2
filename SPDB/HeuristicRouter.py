@@ -294,20 +294,7 @@ class HeuristicRouter:
             return 'Index out of bounds'
         else:
             # DEBUG PRINTS START
-            print(calculate_distance(self.routes[route_index].start.x,
-                                     self.routes[route_index].start.y,
-                                     self.routes[route_index].end.x,
-                                     self.routes[route_index].end.y))
-            bearing_1 = calculate_initial_compass_bearing(
-                (self.routes[route_index].start.y, self.routes[route_index].start.x),
-                (self.routes[route_index].end.y, self.routes[route_index].end.x))
-            print(bearing_1)
-            bearing_2 = calculate_initial_compass_bearing(
-                (self.routes[route_index].start.y, self.routes[route_index].start.x),
-                (self.routes[route_index].intermediate_points[0].y,
-                 self.routes[route_index].intermediate_points[0].x))
-            print(bearing_2)
-            print(calculate_bearing_difference(bearing_1, bearing_2))
+            print('Intermediate points: {intermediate_points}'.format(intermediate_points=len(self.routes[route_index].intermediate_points)))
             # DEBUG PRINTS END
 
             if len(self.routes[route_index].intermediate_points) == 0:

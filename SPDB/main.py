@@ -1,6 +1,7 @@
 import random
 from HeuristicRouter import HeuristicRouter, Location, Route
 from openrouteservice import client
+import datetime
 
 api_key = '58d904a497c67e00015b45fc1f9700c9ad4d40e1b7e22af323c7dbbe'
 start = {'latitude': 48.864716, 'longitude': 2.349014}
@@ -14,15 +15,15 @@ def main():
     router.add_location(Location(latitude=start['latitude'],
                                  longitude=start['longitude']))
     # Germany
-    for i in range(30):
+    for i in range(666):
         router.add_location(Location(latitude=random.uniform(49.8342418433, 52.7859681528),
                                      longitude=random.uniform(6.4021235239, 12.6643305552)))
 
-    for i in range(30):
+    for i in range(666):
         router.add_location(Location(latitude=random.uniform(50.4485650153, 53.3323301908),
                                      longitude=random.uniform(19.7587519419, 26.5757685435)))
 
-    for i in range(30):
+    for i in range(666):
         router.add_location(Location(latitude=random.uniform(47.9455811959, 51.542728235),
                                      longitude=random.uniform(14.9439936411, 22.6014643443)))
 
@@ -38,7 +39,7 @@ def main():
     route = clnt.directions(**params_route)
     print(route)
 
-    iterations = router.calculate_routes_for_given_time()
+    iterations = router.calculate_routes_for_given_time(datetime.timedelta(seconds=20))
     print('Number of iterations: {iterations}'.format(iterations=iterations))
     print(router.export_route_to_link(-1))
 
