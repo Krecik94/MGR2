@@ -123,6 +123,8 @@ class HeuristicRouter:
                          clump_multiplier=1,
                          random_multiplier=1,
                          clump_number=4):
+        if clump_number < 2:
+            clump_number = 2
 
         if len(self.locations) < 2:
             raise Exception('Not enough locations')
@@ -230,12 +232,15 @@ class HeuristicRouter:
 
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.total_weight, reverse=True)
 
+            print(len(constructed_route))
             if len(self.routes) == 0 or len(self.routes[-1].intermediate_points) < len(constructed_route):
                 print('found_better')
                 self.routes.append(Route(start=self.locations[0],
                                          end=self.locations[-1],
                                          intermediate_points=[route_point.corresponding_location for route_point in
                                                               constructed_route]))
+                return True
+            return False
 
     def calculate_number_of_routes(self, number_of_routes):
         # Call calculate_route a number_of_routes, either sequentially or using threads
@@ -264,15 +269,72 @@ class HeuristicRouter:
         if current_time > end_time:
             return 0
 
+        self._calculate_route(1, 1, 0, 0)
+        current_time = datetime.datetime.now()
+        if current_time > end_time:
+            return 0
+
+        self._calculate_route(1, 1.5, 0, 0)
+        current_time = datetime.datetime.now()
+        if current_time > end_time:
+            return 0
+
+        self._calculate_route(1, 0.5, 0, 0)
+        current_time = datetime.datetime.now()
+        if current_time > end_time:
+            return 0
+
         iterations = 0
+        was_better = False
+        was_not_better_counter = 0
+        best_distance_multiplier = random.randrange(0, 4000) / 1000
+        best_bearing_multiplier = random.randrange(0, 4000) / 1000
+        best_clump_multiplier = random.randrange(0, 2000) / 1000
+        best_random_multiplier = random.randrange(0, 2000) / 1000
+        best_clump_number = random.randrange(3, 5)
+        distance_multiplier = best_distance_multiplier
+        bearing_multiplier = best_bearing_multiplier
+        clump_multiplier = best_clump_multiplier
+        random_multiplier = best_random_multiplier
+        clump_number = best_clump_number
+
         while current_time < end_time:
             iterations += 1
-            self._calculate_route(distance_multiplier=random.randrange(0, 4000) / 1000,
-                                  bearing_multiplier=random.randrange(0, 4000) / 1000,
-                                  clump_multiplier=random.randrange(0, 4000) / 1000,
-                                  random_multiplier=random.randrange(0, 4000) / 1000,
-                                  clump_number=random.randrange(3, 5))
+            if was_better:
+                was_not_better_counter = 0
+                best_distance_multiplier = distance_multiplier
+                best_bearing_multiplier = bearing_multiplier
+                best_clump_multiplier = clump_multiplier
+                best_random_multiplier = random_multiplier
+                best_clump_number = clump_number
+            else:
+                was_not_better_counter += 1
+                which_to_change = random.randrange(0, 4)
+                if which_to_change == 0:
+                    distance_multiplier = best_distance_multiplier + (random.randrange(0, 400) - 200) / 1000
+                if which_to_change == 1:
+                    bearing_multiplier = best_bearing_multiplier + (random.randrange(0, 400) - 200) / 1000
+                if which_to_change == 2:
+                    clump_multiplier = best_clump_multiplier + (random.randrange(0, 200) - 100) / 1000
+                if which_to_change == 3:
+                    random_multiplier = best_random_multiplier + (random.randrange(0, 200) - 100) / 1000
+                if which_to_change == 4:
+                    clump_number = best_clump_number + random.randrange(1, 3) - 2
+                if was_not_better_counter > 50:
+                    print('Resetting')
+                    distance_multiplier = random.randrange(0, 4000) / 1000
+                    bearing_multiplier = random.randrange(0, 4000) / 1000
+                    clump_multiplier = random.randrange(0, 2000) / 1000
+                    random_multiplier = random.randrange(0, 2000) / 1000
+                    clump_number = random.randrange(3, 5)
+
+            was_better = self._calculate_route(distance_multiplier=distance_multiplier,
+                                               bearing_multiplier=bearing_multiplier,
+                                               clump_multiplier=clump_multiplier,
+                                               random_multiplier=random_multiplier,
+                                               clump_number=clump_number)
             current_time = datetime.datetime.now()
+
         return iterations
 
     def get_route(self, route_index):
@@ -297,7 +359,8 @@ class HeuristicRouter:
             return 'Index out of bounds'
         else:
             # DEBUG PRINTS START
-            print('Intermediate points: {intermediate_points}'.format(intermediate_points=len(self.routes[route_index].intermediate_points)))
+            print('Intermediate points: {intermediate_points}'.format(
+                intermediate_points=len(self.routes[route_index].intermediate_points)))
             # DEBUG PRINTS END
 
             if len(self.routes[route_index].intermediate_points) == 0:
