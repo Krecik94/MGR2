@@ -10,29 +10,30 @@ def is_stop_sign(img, upper, lower, left, right):
     height = lower - upper
     width = right - left
 
-    if width ==0:
+    if width == 0:
         return False
 
-    if height / width <=0.8 or height / width >= 1.2:
+    if height / width <= 0.8 or height / width >= 1.2:
         return False
 
     inner_region_points = []
     found_inner_regions = []
 
-    for i in range(upper,lower):
-        for j in range(left,right):
+    for i in range(upper, lower):
+        for j in range(left, right):
             if (i, j) in inner_region_points:
                 continue
 
             if img[i, j, 0] == 64:
-                found_region = fill_region(img[upper:lower, left:right], i-upper, j-left, inner_region_points, found_inner_regions, [], 0, 64)
-                if len(found_region) > width*height*0.015 and len(found_region) >3:
-                    print (len(found_region))
+                found_region = fill_region(img[upper:lower, left:right], i - upper, j - left, inner_region_points,
+                                           found_inner_regions, [], 0, 64)
+                if len(found_region) > width * height * 0.015 and len(found_region) > 3:
+                    print(len(found_region))
                     found_inner_regions.append(found_region)
 
-    print(width*height)
-    print('inner regions: %s'%len(found_inner_regions))
-    if len(found_inner_regions) not in [6, 7,8]:
+    print(width * height)
+    print('inner regions: %s' % len(found_inner_regions))
+    if len(found_inner_regions) not in [6, 7, 8]:
         return False
 
     return True
@@ -61,8 +62,8 @@ def fill_region(img, i, j, analysed_points, found_regions, current_region, depth
 
 
 def main():
-    img = cv2.imread('images\\5.jpg')
-    img  = cv2.resize(img,(200,int(len(img)/len(img[0])*200)))
+    img = cv2.imread('images\\2.jpg')
+    img = cv2.resize(img, (200, int(len(img) / len(img[0]) * 200)))
     # hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # for i in range(len(hsv_image)):
@@ -103,14 +104,14 @@ def main():
     found_left = None
     for i in range(len(img[0])):
         if list(img[0:, i, 0]).count(255) > len(img[0]) / 7:
-            print(list(img[ 0:,i, 0]).count(255))
+            print(list(img[0:, i, 0]).count(255))
             found_left = i
             break
 
     found_right = None
     for i in reversed(range(len(img[0]))):
         if list(img[0:, i, 0]).count(255) > len(img[0]) / 7:
-            print(list(img[ 0:,i, 0]).count(255))
+            print(list(img[0:, i, 0]).count(255))
             found_right = i
             break
 
@@ -157,7 +158,7 @@ def main():
     print(len(img[0]))
 
     # hsv_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
-    cv2.imwrite('images\\5_solved.jpg',img)
+    cv2.imwrite('images\\2_solved.jpg', img)
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
