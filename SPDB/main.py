@@ -28,7 +28,7 @@ def main():
     route = clnt.directions(**params_route)
     print(route)
 
-    router.calculate_number_of_routes(200)
+    router.calculate_routes_for_given_time()
     print(router.export_route_to_link(-1))
 
 
