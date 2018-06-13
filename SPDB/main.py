@@ -1,8 +1,8 @@
 import random
 import folium
-import json
+import re
 from HeuristicRouter import HeuristicRouter, Location, Route
-from openrouteservice import client
+from openrouteservice import client, exceptions
 import datetime
 
 api_key = '58d904a497c67e00015b45fc1f9700c9ad4d40e1b7e22af323c7dbbe'
@@ -66,18 +66,37 @@ def main():
 
     route_chunked = list(chunks(new_route['coordinates'], 49))
     mutual_point = []
+    distance = 0
+    duration = 0
+    float_rgx = re.compile('[+-]?[0-9]*\.[0-9]+')
     for chunk in route_chunked:
         new_route['coordinates'] = chunk
         if len(mutual_point) != 0:
             new_route['coordinates'].insert(0, mutual_point)
-        route = clnt.directions(**new_route)
+        route = None
+        while route is None:
+            try:
+                route = clnt.directions(**new_route)
+            except exceptions.ApiError as err:
+                found = float_rgx.findall(err.args[1]['error']['message'])
+                #new_route['coordinates'].pop(new_route['coordinates'].index([float(found[1]),float(found[0])]))
+                for coord in new_route['coordinates']:
+                    if float(found[1]) == round(coord[0], 6):
+                        if float(found[0]) == round(coord[1], 6):
+                            new_route['coordinates'].remove(coord)
+                            break;
+                pass
         folium.features.GeoJson(route).add_to(map1)
+        distance = distance + route['features'][0]['properties']['summary'][0]['distance']
+        duration = duration + route['features'][0]['properties']['summary'][0]['duration']
         mutual_point = new_route['coordinates'].pop()
 
     # route = clnt.directions(**orig_route)
     # folium.features.GeoJson(route).add_to(map1)
 
     map1.save('map.html')
+    print("Distance: %s" %distance)
+    print("duration: %s" %str(datetime.timedelta(seconds=duration)))
 
 
 def chunks(l, n):
