@@ -239,7 +239,7 @@ class HeuristicRouter:
                 datapoints = sorted(datapoints, key=lambda datapoint: datapoint.current_angle)
                 for i in range(len(datapoints)):
                     min_max_difference = datapoints[-1].current_angle - datapoints[0].current_angle
-                datapoints[i].bearing_weight = 100 - (100 / min_max_difference) * (
+                    datapoints[i].bearing_weight = 100 - (100 / min_max_difference) * (
                         datapoints[i].current_angle - datapoints[0].current_angle)
 
                 for i in range(len(datapoints)):
